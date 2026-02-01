@@ -1,0 +1,40 @@
+fit all dominoes within the board
+place every domino in the right spot
+play
+place all the dominoes within the board to satisfy the conditions
+fill the board with all the dominoes to meet the conditions
+rotate the dominoes
+color regions have conditions attached that must be fulfilled
+  - number 2: dots in this region sum to 2
+  - equal sign: dots in this region are all the same number
+  - less than 7: dots in this region sum to less than 7
+  - empty regions: no conditions apply
+satisfy the blue "10" region
+number: dots inside this region must add up to 10
+some regions, like this "0" purple region, will only contain half a domino
+number: dots inside this region must add up to zero
+inside this "=" pink region, all dots must be the same number
+equal: dots inside this region must all be the same number
+use the remaining dominoes to satisfy the conditions
+empty regions: no conditions apply in these spaces
+you successfully met all of the conditions
+reference:
+  - number: dots must add up to this number
+  - equal: dots in this region must all be the same number
+  - not equal: dots in this region must all be different numbers
+  - greater than: dots must sum to more than this number
+  - less than: dots must sum to less than this number
+  - empty regions: no conditions apply in these spaces
+                   dots in it can be any number
+congrats
+you finished an easy puzzle
+new puzzles released daily
+play another difficulty
+back to puzzle
+out of bounds
+almost there
+you've used every domino, but at least one is in the wrong spot
+keep trying
+you finished a medium puzzle
+pieces cannot overlap
+you finished a hard puzzle

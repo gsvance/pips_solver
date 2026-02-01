@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+"""The simplest CLI interface to interact with the Pips solver codebase.
+
+Pass in the name of a puzzle file as the first argument and the script will
+print instructions for how to place dominoes in order to solve it.
+"""
+
+from pathlib import Path
+import sys
+
+import pulp as pl
+
+from pips_ilp import formulate_ilp
+from pips_types import Domino, Puzzle, Space
+
+
+def get_binary_value(var: pl.LpVariable) -> int:
+    """Extract the value of a PuLP variable that is expected to be binary."""
+    float_value = pl.value(var)
+    assert isinstance(float_value, float)
+    int_value = round(float_value)
+    assert int_value in (0, 1)
+    return int_value
+
+
+def verbose_domino_string(domino: Domino) -> str:
+    """Produce a verbose string representation of a domino game piece."""
+    return f'domino [{domino!s}]'
+
+
+def verbose_space_string(space: Space) -> str:
+    """Produce a verbose string representation of board space coordinates."""
+    return f'(row {space.r}, column {space.c})'
+
+
+def main(puzzle_file: Path) -> None:
+    """Read, solve, and print instructions for a single Pips puzzle file."""
+    print()
+    puzzle_text = puzzle_file.read_text(encoding='ascii')
+    print(f'Opened Pips puzzle file: {puzzle_file!s}')
+    puzzle = Puzzle.parse(puzzle_text)
+    print(f'Parsed Pips puzzle: {puzzle!r}')
+    puzzle_ilp = formulate_ilp(puzzle)
+    print('Formulated PuLP ILP. Solving...')
+    print()
+
+    puzzle_ilp.problem.solve()
+    if pl.LpStatus[puzzle_ilp.problem.status] != 'Optimal':
+        print('ERROR: ILP MODEL FAILED TO SOLVE OPTIMALLY')
+        return
+
+    print('Solution Instructions:')
+    for (domino, spot), placement_var in puzzle_ilp.placement_vars.items():
+        if get_binary_value(placement_var) == 0:
+            continue
+        dot_1, dot_2 = domino
+        space_1, space_2 = spot
+        print(
+            '  Place', verbose_domino_string(domino),
+            'with', dot_1, 'at', verbose_space_string(space_1),
+            'and', dot_2, 'at', verbose_space_string(space_2),
+        )
+    print()
+
+
+if __name__ == '__main__':
+    _, arg_1 = sys.argv
+    main(Path(arg_1))
