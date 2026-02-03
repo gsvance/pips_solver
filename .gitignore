@@ -4,3 +4,6 @@ __pycache__/
 # Ignore the puzzles and manual_solutions directories for now
 puzzles/
 manual_solutions/
+
+# Ignore my WSL venv directory
+venv/
