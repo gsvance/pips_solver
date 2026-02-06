@@ -1,9 +1,10 @@
 # Ignore __pycache__ directory
 __pycache__/
 
+# Python virtual env folders
+.venv/
+venv/
+
 # Ignore the puzzles and manual_solutions directories for now
 puzzles/
 manual_solutions/
-
-# Ignore my WSL venv directory
-venv/
