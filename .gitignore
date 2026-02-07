@@ -5,6 +5,5 @@ __pycache__/
 .venv/
 venv/
 
-# Ignore the puzzles and manual_solutions directories for now
+# Don't sync the puzzles folder
 puzzles/
-manual_solutions/
