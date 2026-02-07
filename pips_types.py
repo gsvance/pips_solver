@@ -68,11 +68,6 @@ def parse_board_layout(board_layout_string: str) -> dict[Space, Char]:
     # columns on the Pips board
     board_layout_lines = board_layout_string.splitlines()
 
-    # If the board layout string begins with any number of *completely* blank
-    # lines, then just go ahead and delete those
-    while len(board_layout_lines) > 0 and board_layout_lines[0].isspace():
-        del board_layout_lines[0]
-
     spaces: dict[Space, Char] = {}
     for r, line in enumerate(board_layout_lines, start=TOPMOST_ROW):
         for c, char_string in enumerate(line, start=LEFTMOST_COLUMN):
@@ -81,6 +76,19 @@ def parse_board_layout(board_layout_string: str) -> dict[Space, Char]:
             space = Space(r, c)
             assert space not in spaces
             spaces[space] = Char(char_string)
+
+    # Shift the space coordinates mathematically to remove any empty top rows
+    # or empty left columns if either of those exist
+    r_min = min(space.r for space in spaces)
+    c_min = min(space.c for space in spaces)
+    if r_min != TOPMOST_ROW or c_min != LEFTMOST_COLUMN:
+        delta_r = TOPMOST_ROW - r_min
+        delta_c = LEFTMOST_COLUMN - c_min
+        spaces = {
+            space.shift_by(delta_r=delta_r, delta_c=delta_c): char
+            for (space, char) in spaces.items()
+        }
+
     return spaces
 
 
