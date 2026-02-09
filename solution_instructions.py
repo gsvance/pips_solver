@@ -11,7 +11,7 @@ import sys
 import pulp as pl
 
 from pips_ilp import formulate_ilp
-from pips_types import Domino, Puzzle, Space
+from pips_types import Puzzle
 
 
 def get_binary_value(var: pl.LpVariable) -> int:
@@ -21,16 +21,6 @@ def get_binary_value(var: pl.LpVariable) -> int:
     int_value = round(float_value)
     assert int_value in (0, 1)
     return int_value
-
-
-def verbose_domino_string(domino: Domino) -> str:
-    """Produce a verbose string representation of a domino game piece."""
-    return f'domino [{domino!s}]'
-
-
-def verbose_space_string(space: Space) -> str:
-    """Produce a verbose string representation of board space coordinates."""
-    return f'(row {space.r}, column {space.c})'
 
 
 def main(puzzle_file: Path) -> None:
