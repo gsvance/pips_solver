@@ -55,11 +55,20 @@ def main(puzzle_file: Path) -> None:
             continue
         dot_1, dot_2 = domino
         space_1, space_2 = spot
-        print(
-            '  Place', verbose_domino_string(domino),
-            'with', dot_1, 'at', verbose_space_string(space_1),
-            'and', dot_2, 'at', verbose_space_string(space_2),
-        )
+        if space_1.r == space_2.r:
+            print(
+                f'Place [{domino!s}] in row {space_1.r}',
+                f'with [{dot_1}] in column {space_1.c}',
+                f'and [{dot_2}] in column {space_2.c}',
+            )
+        elif space_1.c == space_2.c:
+            print(
+                f'Place [{domino!s}] in column {space_1.c}',
+                f'with [{dot_1}] in row {space_1.r}',
+                f'and [{dot_2}] in row {space_2.r}',
+            )
+        else:
+            assert False, f'invalid spot: {spot!r}'
     print()
 
 
