@@ -11,7 +11,7 @@ import sys
 import pulp as pl
 
 from pips_ilp import formulate_ilp
-from pips_types import Domino, Puzzle, Space
+from pips_types import Puzzle
 
 
 def get_binary_value(var: pl.LpVariable) -> int:
@@ -21,16 +21,6 @@ def get_binary_value(var: pl.LpVariable) -> int:
     int_value = round(float_value)
     assert int_value in (0, 1)
     return int_value
-
-
-def verbose_domino_string(domino: Domino) -> str:
-    """Produce a verbose string representation of a domino game piece."""
-    return f'domino [{domino!s}]'
-
-
-def verbose_space_string(space: Space) -> str:
-    """Produce a verbose string representation of board space coordinates."""
-    return f'(row {space.r}, column {space.c})'
 
 
 def main(puzzle_file: Path) -> None:
@@ -55,11 +45,20 @@ def main(puzzle_file: Path) -> None:
             continue
         dot_1, dot_2 = domino
         space_1, space_2 = spot
-        print(
-            '  Place', verbose_domino_string(domino),
-            'with', dot_1, 'at', verbose_space_string(space_1),
-            'and', dot_2, 'at', verbose_space_string(space_2),
-        )
+        if space_1.r == space_2.r:
+            print(
+                f'Place [{domino!s}] in row {space_1.r}',
+                f'with [{dot_1}] in column {space_1.c}',
+                f'and [{dot_2}] in column {space_2.c}',
+            )
+        elif space_1.c == space_2.c:
+            print(
+                f'Place [{domino!s}] in column {space_1.c}',
+                f'with [{dot_1}] in row {space_1.r}',
+                f'and [{dot_2}] in row {space_2.r}',
+            )
+        else:
+            assert False, f'invalid spot: {spot!r}'
     print()
 
 
