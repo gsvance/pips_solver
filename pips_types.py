@@ -6,24 +6,6 @@ import dataclasses
 from typing import Final, Self
 
 
-@dataclasses.dataclass(order=True, frozen=True, slots=True)
-class Char:
-    """A string of length 1 containing a non-whitespace character."""
-    string: str
-
-    def __post_init__(self) -> None:
-        if len(self.string) != 1:
-            raise ValueError('char string must have length 1')
-        if self.string.isspace():
-            raise ValueError('char string must not be whitespace')
-
-    def __str__(self) -> str:
-        return self.string
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({str(self)!r})'
-
-
 TOPMOST_ROW: Final[int] = 1
 LEFTMOST_COLUMN: Final[int] = 1
 
