@@ -6,24 +6,6 @@ import dataclasses
 from typing import Final, Self
 
 
-@dataclasses.dataclass(order=True, frozen=True, slots=True)
-class Char:
-    """A string of length 1 containing a non-whitespace character."""
-    string: str
-
-    def __post_init__(self) -> None:
-        if len(self.string) != 1:
-            raise ValueError('char string must have length 1')
-        if self.string.isspace():
-            raise ValueError('char string must not be whitespace')
-
-    def __str__(self) -> str:
-        return self.string
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({str(self)!r})'
-
-
 TOPMOST_ROW: Final[int] = 1
 LEFTMOST_COLUMN: Final[int] = 1
 
@@ -61,21 +43,22 @@ class Space:
         return self.__class__(new_r, new_c, unchecked=True)
 
 
-def parse_board_layout(board_layout_string: str) -> dict[Space, Char]:
+def parse_board_layout(board_layout_string: str) -> dict[Space, str]:
     """Process an ASCII layout of a Pips board and return a dict of spaces."""
     # Note that we *do not* strip any whitespace here because the board layout
     # string could contain leading spaces that ensure correct alignment of the
     # columns on the Pips board
     board_layout_lines = board_layout_string.splitlines()
 
-    spaces: dict[Space, Char] = {}
+    spaces: dict[Space, str] = {}
     for r, line in enumerate(board_layout_lines, start=TOPMOST_ROW):
-        for c, char_string in enumerate(line, start=LEFTMOST_COLUMN):
-            if char_string.isspace():
+        for c, char in enumerate(line, start=LEFTMOST_COLUMN):
+            if char.isspace():
                 continue
+            assert len(char) == 1
             space = Space(r, c)
             assert space not in spaces
-            spaces[space] = Char(char_string)
+            spaces[space] = char
 
     # Shift the space coordinates mathematically to remove any empty top rows
     # or empty left columns if either of those exist
@@ -273,14 +256,17 @@ def parse_condition(condition_string: str) -> Condition:
 
 def parse_region_conditions(
     region_conditions_string: str,
-) -> dict[Char, Condition]:
+) -> dict[str, Condition]:
     """Process an ASCII string of Pips region conditions and return a dict."""
-    conditions: dict[Char, Condition] = {}
+    conditions: dict[str, Condition] = {}
     for line in region_conditions_string.strip().splitlines():
-        char_string, condition_string = line.strip().split()
-        char = Char(char_string)
+        char, condition_string = line.strip().split()
+        if len(char) != 1:
+            raise ValueError(
+                f'region must be identified by one character, not {char!r}'
+            )
         if char in conditions:
-            raise ValueError(f'multiple conditions for region {str(char)!r}')
+            raise ValueError(f'multiple conditions for region {char!r}')
         conditions[char] = parse_condition(condition_string)
     return conditions
 
@@ -326,7 +312,7 @@ class Board:
         for char in conditions:
             if char not in space_chars:
                 raise ValueError(
-                    f'region {str(char)!r} has a condition but no board spaces'
+                    f'region {char!r} has a condition but no board spaces'
                 )
         del space_chars
 
