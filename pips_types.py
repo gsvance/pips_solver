@@ -87,6 +87,7 @@ class Region:
         if len(frozenset(spaces_tuple)) < len(spaces_tuple):
             raise ValueError('spaces inside a region must be unique')
         object.__setattr__(self, 'spaces', spaces_tuple)
+        self._check_connectedness()
 
     def __repr__(self) -> str:
         spaces_list = list(self.spaces)
@@ -97,6 +98,34 @@ class Region:
 
     def __len__(self) -> int:
         return len(self.spaces)
+
+    def __contains__(self, space: Space) -> bool:
+        return space in self.spaces
+
+    def _check_connectedness(self) -> None:
+        """Raise an error if the region's spaces are not connected together."""
+        # The technique here is to use a breadth-first search (BFS) to explore
+        # all the spaces starting with the first one. If we can eventually
+        # reach all spaces by stepping to neighbors, then the region is
+        # connected. If not, then we need to raise an error.
+        visited: set[Space] = set()
+        frontier: set[Space] = set()
+        frontier.add(next(iter(self)))
+
+        while len(frontier) > 0:
+            space = frontier.pop()
+            visited.add(space)
+
+            neighbors = (
+                space.shift_by(delta_r=+1), space.shift_by(delta_r=-1),
+                space.shift_by(delta_c=+1), space.shift_by(delta_c=-1),
+            )
+            for neighbor in neighbors:
+                if neighbor in self and neighbor not in visited:
+                    frontier.add(neighbor)
+
+        if len(visited) != len(self):
+            raise ValueError('spaces in a region must all be connected')
 
     def overlaps_with(self, other: Self) -> bool:
         """Determine whether two regions have any spaces in common."""
