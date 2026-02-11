@@ -6,8 +6,9 @@ import itertools as it
 
 import pulp as pl
 
-from pips_types import Domino, Puzzle, Region, Space
-from pips_types import Equal, GreaterThan, LessThan, NotEqual, Number
+from basics import Domino, Space
+from conditions import Equal, GreaterThan, LessThan, NotEqual, Number
+from puzzle import Puzzle, Region
 
 
 @dataclasses.dataclass(order=True, frozen=True, match_args=False, slots=True)

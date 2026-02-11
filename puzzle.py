@@ -4,7 +4,7 @@ from collections.abc import Iterable, Iterator
 import dataclasses
 from typing import Self
 
-from basic_types import Domino, Space, parse_board_layout, parse_dominoes
+from basics import Domino, Space, parse_board_layout, parse_dominoes
 from conditions import Condition, parse_condition
 
 
