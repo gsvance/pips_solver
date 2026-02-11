@@ -11,6 +11,10 @@ class TestSpace(unittest.TestCase):
         space = Space(2, 3)
         self.assertEqual(space.r, 2)
         self.assertEqual(space.c, 3)
+        with self.assertRaises(ValueError):
+            Space(TOPMOST_ROW - 1, 7)
+        with self.assertRaises(ValueError):
+            Space(8, LEFTMOST_COLUMN - 1)
 
     def test_space_str(self):
         space = Space(6, 4)
