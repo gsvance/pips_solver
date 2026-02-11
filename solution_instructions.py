@@ -11,7 +11,7 @@ import sys
 import pulp as pl
 
 from pips_ilp import formulate_ilp
-from pips_types import Puzzle
+from puzzle import Puzzle
 
 
 def get_binary_value(var: pl.LpVariable) -> int:
