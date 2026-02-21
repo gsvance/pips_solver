@@ -30,6 +30,11 @@ class Spot:
     def __str__(self) -> str:
         return ':'.join(map(str, self))
 
+    def is_sorted(self) -> bool:
+        """Return True if this spot's two spaces occur in sorted order."""
+        space_1, space_2 = self
+        return space_1 < space_2
+
 
 def get_sorted_spots(puzzle: Puzzle) -> list[Spot]:
     """Return a sorted list of every spot where a domino could be placed."""
