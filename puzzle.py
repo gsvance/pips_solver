@@ -4,8 +4,9 @@ from collections.abc import Iterable, Iterator
 import dataclasses
 from typing import Self
 
-from basics import Domino, Space, parse_board_layout, parse_dominoes
 from conditions import Condition, parse_condition
+from dominoes import Domino, parse_dominoes
+from spaces import Space, parse_board_layout
 
 
 @dataclasses.dataclass(order=True, frozen=True, match_args=False, slots=True)

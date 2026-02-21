@@ -2,7 +2,7 @@
 
 import unittest
 
-from basics import Space, TOPMOST_ROW, LEFTMOST_COLUMN, parse_board_layout
+from spaces import Space, TOPMOST_ROW, LEFTMOST_COLUMN, parse_board_layout
 
 
 class TestSpace(unittest.TestCase):

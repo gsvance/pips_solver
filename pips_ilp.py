@@ -6,9 +6,10 @@ import itertools as it
 
 import pulp as pl
 
-from basics import Domino, Space
 from conditions import Equal, GreaterThan, LessThan, NotEqual, Number
+from dominoes import Domino
 from puzzle import Puzzle, Region
+from spaces import Space
 
 
 @dataclasses.dataclass(order=True, frozen=True, match_args=False, slots=True)

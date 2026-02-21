@@ -2,7 +2,7 @@
 
 import unittest
 
-from basics import Domino, MIN_DOTS, MAX_DOTS, parse_dominoes
+from dominoes import Domino, MIN_DOTS, MAX_DOTS, parse_dominoes
 
 
 class TestDomino(unittest.TestCase):
