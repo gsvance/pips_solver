@@ -30,6 +30,11 @@ class Spot:
     def __str__(self) -> str:
         return ':'.join(map(str, self))
 
+    def is_sorted(self) -> bool:
+        """Return True if this spot's two spaces occur in sorted order."""
+        space_1, space_2 = self
+        return space_1 < space_2
+
 
 def get_sorted_spots(puzzle: Puzzle) -> list[Spot]:
     """Return a sorted list of every spot where a domino could be placed."""
@@ -57,6 +62,10 @@ def create_placement_vars(
     placement_vars: dict[tuple[Domino, Spot], pl.LpVariable] = {}
     for domino in puzzle.iter_dominoes():
         for spot in spots:
+            if domino.is_symmetric() and not spot.is_sorted():
+                # For dominoes that are symmetric, do not distinguish between
+                # two spots that represent a 180-degree rotation.
+                continue
             var_name = f'placement__{domino!s}__{spot!s}'
             ilp_var = pl.LpVariable(var_name, cat=pl.LpBinary)
             placement_vars[domino, spot] = ilp_var
@@ -97,7 +106,7 @@ def create_dot_pattern_exprs(
         for spot in spots:
             for dot, space in zip(domino, spot, strict=True):
                 dot_pattern_exprs[space, dot] += (
-                    1 * placement_vars[domino, spot]
+                    1 * placement_vars.get((domino, spot), 0)
                 )
     return dot_pattern_exprs
 
@@ -154,7 +163,10 @@ def formulate_ilp(puzzle: Puzzle) -> PipsILP:
     # Constraints: enforce that each domino is placed in exactly one spot
     for domino in puzzle.iter_dominoes():
         equation = (
-            pl.lpSum(1 * placement_vars[domino, spot] for spot in spots) == 1
+            pl.lpSum(
+                1 * placement_vars.get((domino, spot), 0) for spot in spots
+            )
+            == 1
         )
         problem += (equation, f'use_domino__{domino}')
 
