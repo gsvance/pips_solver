@@ -106,7 +106,7 @@ def create_dot_pattern_exprs(
         for spot in spots:
             for dot, space in zip(domino, spot, strict=True):
                 dot_pattern_exprs[space, dot] += (
-                    1 * placement_vars[domino, spot]
+                    1 * placement_vars.get((domino, spot), 0)
                 )
     return dot_pattern_exprs
 
@@ -163,7 +163,10 @@ def formulate_ilp(puzzle: Puzzle) -> PipsILP:
     # Constraints: enforce that each domino is placed in exactly one spot
     for domino in puzzle.iter_dominoes():
         equation = (
-            pl.lpSum(1 * placement_vars[domino, spot] for spot in spots) == 1
+            pl.lpSum(
+                1 * placement_vars.get((domino, spot), 0) for spot in spots
+            )
+            == 1
         )
         problem += (equation, f'use_domino__{domino}')
 
