@@ -62,6 +62,10 @@ def create_placement_vars(
     placement_vars: dict[tuple[Domino, Spot], pl.LpVariable] = {}
     for domino in puzzle.iter_dominoes():
         for spot in spots:
+            if domino.is_symmetric() and not spot.is_sorted():
+                # For dominoes that are symmetric, do not distinguish between
+                # two spots that represent a 180-degree rotation.
+                continue
             var_name = f'placement__{domino!s}__{spot!s}'
             ilp_var = pl.LpVariable(var_name, cat=pl.LpBinary)
             placement_vars[domino, spot] = ilp_var
