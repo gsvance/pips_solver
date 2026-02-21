@@ -1,9 +1,12 @@
-# Ignore __pycache__ directory
+# Pre-compiled Python code
 __pycache__/
 
-# Python virtual env folders
+# Python virtual environments
 .venv/
 venv/
 
 # Don't sync the puzzles folder
-puzzles/
+/puzzles/
+
+# VS Code metadata
+/.vscode/
