@@ -52,9 +52,10 @@ NONBLANK: Final[str] = '#'
 
 
 def create_blank_grid(puzzle: Puzzle) -> list[list[str]]:
+    """Create a blank grid of characters to be filled for the visualization."""
     grid_height = (
         SPACE_SIZE * puzzle.num_rows + OUTER_BORDER * 2
-        + int(ADD_FILLER) * (puzzle.num_rows + 1) 
+        + int(ADD_FILLER) * (puzzle.num_rows + 1)
     )
     grid_width = (
         SPACE_SIZE * puzzle.num_columns + OUTER_BORDER * 2
@@ -69,6 +70,11 @@ def create_blank_grid(puzzle: Puzzle) -> list[list[str]]:
 
 
 def transform_coordinates(space: Space) -> tuple[int, int]:
+    """Transform a Pips space into coordinates for the character grid.
+
+    The y and x values returned are the position where the space's dots value
+    should be rendered.
+    """
     zero_based_r = space.r - TOPMOST_ROW
     zero_based_c = space.c - LEFTMOST_COLUMN
     transform_slope = SPACE_SIZE + int(ADD_FILLER)
@@ -79,6 +85,7 @@ def transform_coordinates(space: Space) -> tuple[int, int]:
 
 
 def draw_domino(grid: list[list[str]], domino: Domino, spot: Spot) -> None:
+    """Draw a domino in a given board spot on the character grid."""
     space_1, space_2 = spot
     y1, x1 = transform_coordinates(space_1)
     y2, x2 = transform_coordinates(space_2)
@@ -153,6 +160,7 @@ def draw_domino(grid: list[list[str]], domino: Domino, spot: Spot) -> None:
 
 
 def add_nonblank_filler(grid: list[list[str]], puzzle: Puzzle) -> None:
+    """Add nonblank filler characters between adjacent dominoes."""
     if not ADD_FILLER:
         return
 
