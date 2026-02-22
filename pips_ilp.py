@@ -2,13 +2,15 @@
 
 from collections.abc import Iterator
 import dataclasses
-import itertools as it
+import itertools
 
 import pulp as pl
 
-from basics import Domino, Space
 from conditions import Equal, GreaterThan, LessThan, NotEqual, Number
-from puzzle import Puzzle, Region
+from dominoes import Domino
+from puzzle import Puzzle
+from regions import Region
+from spaces import Space
 
 
 @dataclasses.dataclass(order=True, frozen=True, match_args=False, slots=True)
@@ -192,7 +194,7 @@ def formulate_ilp(puzzle: Puzzle) -> PipsILP:
                 problem += (equation, f'number_condition__{region_string}')
 
             case Equal():
-                for space_1, space_2 in it.pairwise(region):
+                for space_1, space_2 in itertools.pairwise(region):
                     equation = (
                         dot_number_exprs[space_1] == dot_number_exprs[space_2]
                     )

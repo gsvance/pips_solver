@@ -1,24 +1,24 @@
-"""Data classes for representing Pips color region conditions."""
+"""Conditions are the requirements attached to Pips color regions."""
 
-import abc
-import dataclasses
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Final, Self
 
 
-class Condition(abc.ABC):
+class Condition(ABC):
     """Abstract base class for any condition on a region of a Pips board."""
 
     @classmethod
-    @abc.abstractmethod
+    @abstractmethod
     def maybe_parse(cls, condition_string: str) -> Self | None:
         """Parse a condition string if it is valid. Otherwise, return None."""
 
-    @abc.abstractmethod
+    @abstractmethod
     def as_terse_string(self) -> str:
         """Generate a terse condition string representing this condition."""
 
 
-@dataclasses.dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, slots=True)
 class Number(Condition):
     """The Pips condition where dots must add up to a certain number."""
     number: int
@@ -44,7 +44,7 @@ class Number(Condition):
 EQUAL_SYMBOL: Final[str] = '='
 
 
-@dataclasses.dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, slots=True)
 class Equal(Condition):
     """The Pips condition where dots must all be equal."""
 
@@ -61,7 +61,7 @@ class Equal(Condition):
 NOT_EQUAL_SYMBOL: Final[str] = '=/='
 
 
-@dataclasses.dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, slots=True)
 class NotEqual(Condition):
     """The Pips condition where dots must all be different."""
 
@@ -78,7 +78,7 @@ class NotEqual(Condition):
 GREATER_THAN_PREFIX: Final[str] = '>'
 
 
-@dataclasses.dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, slots=True)
 class GreaterThan(Condition):
     """The Pips condition where dots must sum to more than some number."""
     number: int
@@ -112,7 +112,7 @@ class GreaterThan(Condition):
 LESS_THAN_PREFIX: Final[str] = '<'
 
 
-@dataclasses.dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, slots=True)
 class LessThan(Condition):
     """The Pips condition where dots must sum to less than some number."""
     number: int
