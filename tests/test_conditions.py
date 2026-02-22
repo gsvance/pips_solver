@@ -171,3 +171,30 @@ class TestConditions(unittest.TestCase):
         for invalid in INVALID_CONDITION_STRINGS:
             with self.assertRaises(ValueError):
                 parse_condition(invalid)
+
+    def test_condition_matching(self):
+        """Test that conditions work properly in match-case statements."""
+        strings_and_answers = [
+            ('21', 'number'),
+            (EQUAL_SYMBOL, 'equal'),
+            (NOT_EQUAL_SYMBOL, 'not equal'),
+            (GREATER_THAN_PREFIX + '17', 'greater than'),
+            (LESS_THAN_PREFIX + '13', 'less than'),
+        ]
+        for string, answer in strings_and_answers:
+            match parse_condition(string):
+                case Number(n):
+                    self.assertEqual(answer, 'number')
+                    self.assertEqual(n, 21)
+                case Equal():
+                    self.assertEqual(answer, 'equal')
+                case NotEqual():
+                    self.assertEqual(answer, 'not equal')
+                case GreaterThan(n):
+                    self.assertEqual(answer, 'greater than')
+                    self.assertEqual(n, 17)
+                case LessThan(n):
+                    self.assertEqual(answer, 'less than')
+                    self.assertEqual(n, 13)
+                case _:
+                    assert False, 'failure in condition matching'
