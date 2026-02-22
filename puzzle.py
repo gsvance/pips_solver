@@ -50,6 +50,16 @@ class Puzzle:
         return self.board.num_spaces
 
     @property
+    def num_rows(self) -> int:
+        """The total number of rows (including empty ones) on the board."""
+        return self.board.num_rows
+
+    @property
+    def num_columns(self) -> int:
+        """The total number of columns (including empty ones) on the board."""
+        return self.board.num_columns
+
+    @property
     def num_regions(self) -> int:
         """The total number of regions on the board."""
         return self.board.num_regions

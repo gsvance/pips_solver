@@ -87,6 +87,20 @@ class Board:
         return len(self.spaces)
 
     @property
+    def num_rows(self) -> int:
+        """The total number of rows (including empty ones) on the board."""
+        min_r = min(space.r for space in self.spaces)
+        max_r = max(space.r for space in self.spaces)
+        return max_r - min_r + 1
+
+    @property
+    def num_columns(self) -> int:
+        """The total number of columns (including empty ones) on the board."""
+        min_c = min(space.c for space in self.spaces)
+        max_c = max(space.c for space in self.spaces)
+        return max_c - min_c + 1
+
+    @property
     def num_regions(self) -> int:
         """The total number of regions on the board."""
         return len(self.regions)

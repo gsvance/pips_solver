@@ -37,6 +37,19 @@ class Spot:
         space_1, space_2 = self
         return space_1 < space_2
 
+    def is_horizontal(self) -> bool:
+        """Return True if the spot is horizontal and False if vertical."""
+        space_1, space_2 = self
+        if space_1.r == space_2.r:
+            return True  # Same row == horizontal
+        if space_1.c == space_2.c:
+            return False  # Same column == vertical
+        assert False, 'unreachable code'
+
+    def is_vertical(self) -> bool:
+        """Return True if the spot is vertical and False if horizontal."""
+        return not self.is_horizontal()
+
 
 def get_sorted_spots(puzzle: Puzzle) -> list[Spot]:
     """Return a sorted list of every spot where a domino could be placed."""
