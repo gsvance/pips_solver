@@ -43,22 +43,19 @@ def main(puzzle_file: Path) -> None:
     for (domino, spot), placement_var in puzzle_ilp.placement_vars.items():
         if get_binary_value(placement_var) == 0:
             continue
-        dot_1, dot_2 = domino
-        space_1, space_2 = spot
-        if space_1.r == space_2.r:
+        (dot_1, dot_2), (space_1, space_2) = domino, spot
+        if spot.is_horizontal():
             print(
                 f'Place [{domino!s}] in row {space_1.r}',
                 f'with [{dot_1}] in column {space_1.c}',
                 f'and [{dot_2}] in column {space_2.c}',
             )
-        elif space_1.c == space_2.c:
+        else:  # The spot is vertical
             print(
                 f'Place [{domino!s}] in column {space_1.c}',
                 f'with [{dot_1}] in row {space_1.r}',
                 f'and [{dot_2}] in row {space_2.r}',
             )
-        else:
-            assert False, f'invalid spot: {spot!r}'
     print()
 
 
