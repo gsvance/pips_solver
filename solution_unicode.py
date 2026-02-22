@@ -48,7 +48,7 @@ TEE_HORIZONTAL_UP: Final[str] = chr(0x2534)
 
 # Characters for drawing dominoes: internal fillers
 BLANK: Final[str] = ' '
-NONBLANK: Final[str] = '#'
+NONBLANK_FILLER: Final[str] = '.'
 
 
 def create_blank_grid(puzzle: Puzzle) -> list[list[str]]:
@@ -175,7 +175,7 @@ def add_nonblank_filler(grid: list[list[str]], puzzle: Puzzle) -> None:
             x_middle = min(x1, x2) - HALF_SIZE + SPACE_SIZE
             for y in range(y_top, y_bottom + 1):
                 if grid[y][x_middle] == BLANK:
-                    grid[y][x_middle] = NONBLANK
+                    grid[y][x_middle] = NONBLANK_FILLER
 
         else:  # The spot is vertical
             x_left = x1 - HALF_SIZE
@@ -183,7 +183,7 @@ def add_nonblank_filler(grid: list[list[str]], puzzle: Puzzle) -> None:
             y_middle = min(y1, y2) - HALF_SIZE + SPACE_SIZE
             for x in range(x_left, x_right + 1):
                 if grid[y_middle][x] == BLANK:
-                    grid[y_middle][x] = NONBLANK
+                    grid[y_middle][x] = NONBLANK_FILLER
 
     for y, grid_row in enumerate(grid):
         if y in (0, len(grid) - 1):
@@ -192,10 +192,10 @@ def add_nonblank_filler(grid: list[list[str]], puzzle: Puzzle) -> None:
             if x in (0, len(grid_row) - 1):
                 continue
             if (
-                grid[y][x - 1] == grid[y][x + 1] == NONBLANK
-                or grid[y - 1][x] == grid[y + 1][x] == NONBLANK
+                grid[y][x - 1] == grid[y][x + 1] == NONBLANK_FILLER
+                or grid[y - 1][x] == grid[y + 1][x] == NONBLANK_FILLER
             ):
-                grid[y][x] = NONBLANK
+                grid[y][x] = NONBLANK_FILLER
 
 
 def get_binary_value(var: pl.LpVariable) -> int:
