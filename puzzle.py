@@ -1,12 +1,12 @@
 """A collection of Python types for representing parts of a Pips puzzle."""
 
-from collections.abc import Iterable, Iterator
-import dataclasses
+from collections.abc import Iterator
 from typing import Self
 
 from conditions import Condition, parse_condition
 from dominoes import Domino, parse_dominoes
-from spaces import Space, parse_board_layout
+from regions import Region
+from spaces import parse_board_layout, Space
 
 
 def parse_region_conditions(
