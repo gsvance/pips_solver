@@ -2,6 +2,7 @@
 
 from collections.abc import Iterator
 from dataclasses import dataclass
+from typing import Self
 
 from puzzle import Puzzle
 from spaces import Space
@@ -43,6 +44,10 @@ class Spot:
     def is_vertical(self) -> bool:
         """Return True if the spot is vertical and False if horizontal."""
         return not self.is_horizontal()
+
+    def overlaps_with(self, other: Self) -> bool:
+        """Return whether two spots have an spaces in common."""
+        return any((space in other) for space in self)
 
 
 def get_sorted_spots(puzzle: Puzzle) -> list[Spot]:

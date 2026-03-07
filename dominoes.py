@@ -50,6 +50,10 @@ class Domino:
     def __str__(self) -> str:
         return '|'.join(map(str, self))
 
+    def as_terse_string(self):
+        """Generate a terse two-digit string representing the domino."""
+        return ''.join(map(str, self))
+
     def is_symmetric(self) -> bool:
         """Return True if the domino has two copies of the same dots value."""
         dots_1, dots_2 = self
