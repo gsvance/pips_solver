@@ -2,6 +2,7 @@
 
 from collections.abc import Iterator
 from dataclasses import dataclass
+from typing import Self
 
 from puzzle import Puzzle
 from spaces import Space
@@ -16,6 +17,12 @@ class Spot:
         if abs(space_2.r - space_1.r) + abs(space_2.c - space_1.c) != 1:
             raise ValueError('spot must be made up of two adjacent spaces')
         object.__setattr__(self, 'spaces', (space_1, space_2))
+
+    @classmethod
+    def parse(cls, spot_string: str) -> Self:
+        """Parse a string representation of two space coordinates as a spot."""
+        space_1, space_2 = map(Space.parse, spot_string.strip().split(':'))
+        return cls(space_1, space_2)
 
     def __iter__(self) -> Iterator[Space]:
         return iter(self.spaces)
@@ -43,6 +50,10 @@ class Spot:
     def is_vertical(self) -> bool:
         """Return True if the spot is vertical and False if horizontal."""
         return not self.is_horizontal()
+
+    def overlaps_with(self, other: Self) -> bool:
+        """Return whether two spots have an spaces in common."""
+        return any((space in other) for space in self)
 
 
 def get_sorted_spots(puzzle: Puzzle) -> list[Spot]:

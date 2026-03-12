@@ -49,6 +49,15 @@ class TestSpaces(unittest.TestCase):
             self.assertEqual(space.r, r)
             self.assertEqual(space.c, c)
 
+    def test_space_parse(self):
+        """Test parsing spaces from row and column coordinate strings."""
+        for delta_r in range(12):
+            r = TOPMOST_ROW + delta_r
+            for delta_c in range(12):
+                c = LEFTMOST_COLUMN + delta_c
+                space_str = str(r) + ',' + str(c)
+                self.assertEqual(Space.parse(space_str), Space(r, c))
+
     def test_space_str_and_repr(self):
         """Check that the space object's str and repr methods work."""
         r, c = TOPMOST_ROW + 6, LEFTMOST_COLUMN + 4

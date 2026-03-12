@@ -48,7 +48,7 @@ class Domino:
         return f'{self.__class__.__name__}{tuple(self)!r}'
 
     def __str__(self) -> str:
-        return '|'.join(map(str, self))
+        return ''.join(map(str, self))
 
     def is_symmetric(self) -> bool:
         """Return True if the domino has two copies of the same dots value."""

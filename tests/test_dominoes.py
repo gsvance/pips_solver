@@ -83,7 +83,7 @@ class TestDominoes(unittest.TestCase):
         """Make sure the domino str and repr methods work as expected."""
         for dots_1, dots_2 in itertools.product(VALID_DOTS, VALID_DOTS):
             domino = Domino(dots_1, dots_2)
-            expected_str = str(dots_1) + '|' + str(dots_2)
+            expected_str = str(dots_1) + str(dots_2)
             self.assertEqual(str(domino), expected_str)
             expected_repr = 'Domino(' + str(dots_1) + ', ' + str(dots_2) + ')'
             self.assertEqual(repr(domino), expected_repr)
