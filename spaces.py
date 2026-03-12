@@ -29,6 +29,12 @@ class Space:
         object.__setattr__(self, 'r', r)
         object.__setattr__(self, 'c', c)
 
+    @classmethod
+    def parse(cls, space_string: str) -> Self:
+        """Parse a string with row and column coordinates as a space."""
+        r, c = map(int, space_string.strip().split(','))
+        return cls(r, c)
+
     def __str__(self) -> str:
         return f'{self.r},{self.c}'
 

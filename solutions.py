@@ -43,11 +43,6 @@ class Solution:
             for line in f:
                 domino_string, spot_string = line.strip().split()
                 domino = Domino.parse(domino_string)
-                space_1_string, space_2_string = spot_string.split(':')
-                space_1_r_string, space_1_c_string = space_1_string.split(',')
-                space_2_r_string, space_2_c_string = space_2_string.split(',')
-                space_1 = Space(int(space_1_r_string), int(space_1_c_string))
-                space_2 = Space(int(space_2_r_string), int(space_2_c_string))
-                spot = Spot(space_1, space_2)
+                spot = Spot.parse(spot_string)
                 solution.add_move(domino, spot)
         return solution

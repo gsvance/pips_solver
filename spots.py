@@ -18,6 +18,12 @@ class Spot:
             raise ValueError('spot must be made up of two adjacent spaces')
         object.__setattr__(self, 'spaces', (space_1, space_2))
 
+    @classmethod
+    def parse(cls, spot_string: str) -> Self:
+        """Parse a string representation of two space coordinates as a spot."""
+        space_1, space_2 = map(Space.parse, spot_string.strip().split(':'))
+        return cls(space_1, space_2)
+
     def __iter__(self) -> Iterator[Space]:
         return iter(self.spaces)
 
