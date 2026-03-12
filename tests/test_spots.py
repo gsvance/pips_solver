@@ -58,6 +58,21 @@ class TestSpots(unittest.TestCase):
         spot_ba = Spot(space_b, space_a)
         self.assertListEqual(list(iter(spot_ba)), [space_b, space_a])
 
+    def test_spot_parse(self):
+        """Test parsing of spot objects from string coordinate pairs."""
+        space_1 = Space(TOPMOST_ROW + 0, LEFTMOST_COLUMN + 4)
+        space_2 = space_1.shift_by(delta_r=1)
+        space_3 = space_1.shift_by(delta_c=1)
+
+        space_pairs = [
+            (space_1, space_2), (space_2, space_1),
+            (space_1, space_3), (space_3, space_1),
+        ]
+
+        for space_a, space_b in space_pairs:
+            spot_str = str(space_a) + ':' + str(space_b)
+            self.assertEqual(Spot.parse(spot_str), Spot(space_a, space_b))
+
     def test_spot_repr_and_str(self):
         """Check the repr and str methods on the spot class."""
         space_a = Space(TOPMOST_ROW + 5, LEFTMOST_COLUMN + 8)
@@ -99,6 +114,25 @@ class TestSpots(unittest.TestCase):
         self.assertTrue(spot_ca.is_horizontal())
         self.assertFalse(spot_ac.is_vertical())
         self.assertFalse(spot_ca.is_vertical())
+
+    def test_spot_overlaps_with(self):
+        """Ensure that spots can tell if they overlap one another."""
+        space_a = Space(TOPMOST_ROW, LEFTMOST_COLUMN + 1)
+        space_b = space_a.shift_by(delta_r=1)
+        space_c = space_b.shift_by(delta_r=1)
+        space_d = space_c.shift_by(delta_c=-1)
+
+        spot_ab = Spot(space_a, space_b)
+        spot_cd = Spot(space_c, space_d)
+        spot_bc = Spot(space_b, space_c)
+
+        self.assertFalse(spot_ab.overlaps_with(spot_cd))
+        self.assertFalse(spot_cd.overlaps_with(spot_ab))
+
+        self.assertTrue(spot_ab.overlaps_with(spot_bc))
+        self.assertTrue(spot_bc.overlaps_with(spot_ab))
+        self.assertTrue(spot_cd.overlaps_with(spot_bc))
+        self.assertTrue(spot_bc.overlaps_with(spot_cd))
 
     def test_spot_ordering(self):
         """Check that comparisons between unequal spots work as expected."""
