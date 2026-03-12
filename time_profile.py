@@ -15,11 +15,13 @@ from puzzle import Puzzle
 
 
 def find_puzzle_files(puzzles_dir: Path) -> list[Path]:
+    """Accept a directory path and return a list of Pips puzzle files."""
     assert puzzles_dir.is_dir()
     return list(puzzles_dir.glob('*.txt'))
 
 
 def measure_puzzle_solving_times(puzzle_path: Path) -> dict[str, float]:
+    """Measure the time needed to solve a Pips puzzle from start to finish."""
     time_0 = time.perf_counter()
     puzzle_text = puzzle_path.read_text(encoding='ascii')
     time_1 = time.perf_counter()
@@ -43,11 +45,13 @@ def measure_puzzle_solving_times(puzzle_path: Path) -> dict[str, float]:
 
 
 def average(nums: Iterable[float]) -> float:
+    """Compute the arithmetic mean of a sequence of floats."""
     nums_list = list(nums)
     return sum(nums_list) / len(nums_list)
 
 
 def median(nums: Iterable[float]) -> float:
+    """Compute the median of a sequence of floats by sorting."""
     nums_list = sorted(nums)
     if len(nums_list) % 2 == 1:
         middle = len(nums_list) // 2
@@ -58,10 +62,12 @@ def median(nums: Iterable[float]) -> float:
 
 
 def ms(x: float) -> str:
+    """Format a floating number of seconds as a string in milliseconds."""
     return f'{x*1000:,.1f} ms'
 
 
 def print_report(times: list[dict[str, float]]) -> None:
+    """Print a statistical report for the user with puzzle solve times."""
     assert len(times) > 0
     print()
     print('number of puzzles solved:', len(times))
