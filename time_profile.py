@@ -34,13 +34,13 @@ def measure_puzzle_solving_times(puzzle_path: Path) -> dict[str, float]:
     assert solution is not None
 
     return {
-        'file reading': time_1 - time_0,
-        'puzzle parsing': time_2 - time_1,
-        'ilp formulation': time_3 - time_2,
-        'overall solution': time_4 - time_3,
-        'solver time': float(puzzle_ilp.problem.solutionTime),
-        'cleanup time': (time_4 - time_3) - puzzle_ilp.problem.solutionTime,
-        'total time': time_4 - time_0,
+        'file reading time': time_1 - time_0,
+        'puzzle parsing time': time_2 - time_1,
+        'ILP formulation time': time_3 - time_2,
+        'solver + cleanup time': time_4 - time_3,
+        'solver time only': float(puzzle_ilp.problem.solutionTime),
+        'cleanup time only': (time_4 - time_3) - puzzle_ilp.problem.solutionTime,
+        'complete file-to-solution time': time_4 - time_0,
     }
 
 
@@ -70,17 +70,17 @@ def print_report(times: list[dict[str, float]]) -> None:
     """Print a statistical report for the user with puzzle solve times."""
     assert len(times) > 0
     print()
-    print('number of puzzles solved:', len(times))
+    print('Total Puzzles Solved:', len(times))
     print()
     report_keys = list(times[0].keys())
     for report in times:
         assert list(report.keys()) == report_keys
     for key in report_keys:
-        print('measured:', key)
-        print('min:', ms(min(report[key] for report in times)))
-        print('average:', ms(average(report[key] for report in times)))
-        print('median:', ms(average(report[key] for report in times)))
-        print('max:', ms(max(report[key] for report in times)))
+        print('Measured Quantity:', key)
+        print('   Best Case:', ms(min(report[key] for report in times)))
+        print('     Average:', ms(average(report[key] for report in times)))
+        print('      Median:', ms(average(report[key] for report in times)))
+        print('  Worst Case:', ms(max(report[key] for report in times)))
         print()
 
 
