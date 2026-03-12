@@ -33,13 +33,15 @@ def measure_puzzle_solving_times(puzzle_path: Path) -> dict[str, float]:
     time_4 = time.perf_counter()
     assert solution is not None
 
+    solver_time = float(puzzle_ilp.problem.solutionTime)
+
     return {
         'file reading time': time_1 - time_0,
         'puzzle parsing time': time_2 - time_1,
         'ILP formulation time': time_3 - time_2,
         'solver + cleanup time': time_4 - time_3,
-        'solver time only': float(puzzle_ilp.problem.solutionTime),
-        'cleanup time only': (time_4 - time_3) - puzzle_ilp.problem.solutionTime,
+        'solver time only': solver_time,
+        'cleanup time only': (time_4 - time_3) - solver_time,
         'complete file-to-solution time': time_4 - time_0,
     }
 
