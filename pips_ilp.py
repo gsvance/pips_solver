@@ -9,6 +9,7 @@ from conditions import Equal, GreaterThan, LessThan, NotEqual, Number
 from dominoes import Domino
 from puzzle import Puzzle
 from regions import Region
+from solutions import Solution
 from spaces import Space
 from spots import get_sorted_spots, Spot
 
@@ -100,6 +101,15 @@ def abbreviate_region(region: Region) -> str:
     return f'Rg{first_space!s}'
 
 
+def get_binary_value(var: pl.LpVariable) -> int:
+    """Extract the value of a PuLP variable that is expected to be binary."""
+    float_value = pl.value(var)
+    assert isinstance(float_value, float)
+    int_value = round(float_value)
+    assert int_value in (0, 1)
+    return int_value
+
+
 @dataclasses.dataclass(eq=False, match_args=False, slots=True)
 class PipsILP:
     """A PuLP problem together with dicts of variables and expressions."""
@@ -107,6 +117,19 @@ class PipsILP:
     placement_vars: dict[tuple[Domino, Spot], pl.LpVariable]
     dot_pattern_exprs: dict[tuple[Space, int], pl.LpAffineExpression]
     dot_number_exprs: dict[Space, pl.LpAffineExpression]
+
+    def solve(self) -> Solution | None:
+        """Solve the ILP problem with PuLP and return a solution object."""
+        self.problem.solve()
+
+        if pl.LpStatus[self.problem.status] != 'Optimal':
+            return None
+
+        solution = Solution()
+        for (domino, spot), placement_var in self.placement_vars.items():
+            if get_binary_value(placement_var) != 0:
+                solution.add_move(domino, spot)
+        return solution
 
 
 def formulate_ilp(puzzle: Puzzle) -> PipsILP:

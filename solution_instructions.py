@@ -8,19 +8,8 @@ print instructions for how to place dominoes in order to solve it.
 from pathlib import Path
 import sys
 
-import pulp as pl
-
 from pips_ilp import formulate_ilp
 from puzzle import Puzzle
-
-
-def get_binary_value(var: pl.LpVariable) -> int:
-    """Extract the value of a PuLP variable that is expected to be binary."""
-    float_value = pl.value(var)
-    assert isinstance(float_value, float)
-    int_value = round(float_value)
-    assert int_value in (0, 1)
-    return int_value
 
 
 def main(puzzle_file: Path) -> None:
@@ -34,15 +23,13 @@ def main(puzzle_file: Path) -> None:
     print('Formulated PuLP ILP. Solving...')
     print()
 
-    puzzle_ilp.problem.solve()
-    if pl.LpStatus[puzzle_ilp.problem.status] != 'Optimal':
+    solution = puzzle_ilp.solve()
+    if solution is None:
         print('ERROR: ILP MODEL FAILED TO SOLVE OPTIMALLY')
         return
 
     print('Solution Instructions:')
-    for (domino, spot), placement_var in puzzle_ilp.placement_vars.items():
-        if get_binary_value(placement_var) == 0:
-            continue
+    for domino, spot in solution:
         (dot_1, dot_2), (space_1, space_2) = domino, spot
         if spot.is_horizontal():
             print(

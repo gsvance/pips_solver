@@ -9,8 +9,6 @@ from pathlib import Path
 import sys
 from typing import Final
 
-import pulp as pl
-
 from dominoes import Domino
 from pips_ilp import formulate_ilp, get_sorted_spots, Spot
 from puzzle import Puzzle
@@ -198,15 +196,6 @@ def add_nonblank_filler(grid: list[list[str]], puzzle: Puzzle) -> None:
                 grid[y][x] = NONBLANK_FILLER
 
 
-def get_binary_value(var: pl.LpVariable) -> int:
-    """Extract the value of a PuLP variable that is expected to be binary."""
-    float_value = pl.value(var)
-    assert isinstance(float_value, float)
-    int_value = round(float_value)
-    assert int_value in (0, 1)
-    return int_value
-
-
 def main(puzzle_file: Path) -> None:
     """Read, solve, and print a visual for a single Pips puzzle file."""
     print()
@@ -218,16 +207,14 @@ def main(puzzle_file: Path) -> None:
     print('Formulated PuLP ILP. Solving...')
     print()
 
-    puzzle_ilp.problem.solve()
-    if pl.LpStatus[puzzle_ilp.problem.status] != 'Optimal':
+    solution = puzzle_ilp.solve()
+    if solution is None:
         print('ERROR: ILP MODEL FAILED TO SOLVE OPTIMALLY')
         return
 
     grid = create_blank_grid(puzzle)
-    for (domino, spot), placement_var in puzzle_ilp.placement_vars.items():
-        if get_binary_value(placement_var) != 0:
-            draw_domino(grid, domino, spot)
-    add_nonblank_filler(grid, puzzle)
+    for domino, spot in solution:
+        draw_domino(grid, domino, spot)
 
     print('Solution Visualization:')
     print(*(''.join(grid_row).rstrip() for grid_row in grid), sep='\n')
