@@ -96,10 +96,8 @@ class TestSolution(unittest.TestCase):
         solution.add_move(domino_b, Spot(space_d, space_c))
 
         expected_file_contents = (
-            domino_a.as_terse_string() + ' '
-            + str(Spot(space_a, space_b)) + '\n'
-            + domino_b.as_terse_string() + ' '
-            + str(Spot(space_d, space_c)) + '\n'
+            str(domino_a) + ' ' + str(Spot(space_a, space_b)) + '\n'
+            + str(domino_b) + ' ' + str(Spot(space_d, space_c)) + '\n'
         )
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -128,10 +126,8 @@ class TestSolution(unittest.TestCase):
         solution.add_move(domino_b, Spot(space_d, space_c))
 
         contents_for_file = (
-            domino_a.as_terse_string() + ' '
-            + str(Spot(space_a, space_b)) + '\n'
-            + domino_b.as_terse_string() + ' '
-            + str(Spot(space_d, space_c)) + '\n'
+            str(domino_a) + ' ' + str(Spot(space_a, space_b)) + '\n'
+            + str(domino_b) + ' ' + str(Spot(space_d, space_c)) + '\n'
         )
 
         with tempfile.TemporaryDirectory() as temp_dir:

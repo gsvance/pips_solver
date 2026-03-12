@@ -31,17 +31,18 @@ def main(puzzle_file: Path) -> None:
     print('Solution Instructions:')
     for domino, spot in solution:
         (dot_1, dot_2), (space_1, space_2) = domino, spot
+        domino_str = '[' + '|'.join(str(domino)) + ']'
         if spot.is_horizontal():
             print(
-                f'Place [{domino!s}] in row {space_1.r}',
-                f'with [{dot_1}] in column {space_1.c}',
-                f'and [{dot_2}] in column {space_2.c}',
+                f'Place {domino_str} in row {space_1.r}',
+                f'with [{dot_1}| in column {space_1.c}',
+                f'and |{dot_2}] in column {space_2.c}',
             )
         else:  # The spot is vertical
             print(
-                f'Place [{domino!s}] in column {space_1.c}',
-                f'with [{dot_1}] in row {space_1.r}',
-                f'and [{dot_2}] in row {space_2.r}',
+                f'Place {domino_str} in column {space_1.c}',
+                f'with [{dot_1}| in row {space_1.r}',
+                f'and |{dot_2}] in row {space_2.r}',
             )
     print()
 

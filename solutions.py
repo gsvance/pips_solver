@@ -33,7 +33,7 @@ class Solution:
         """Save a solution object to a text file."""
         with file_path.open('w', encoding='utf-8') as f:
             for domino, spot in self:
-                f.write(f'{domino.as_terse_string()} {spot!s}\n')
+                f.write(f'{domino!s} {spot!s}\n')
 
     @classmethod
     def load_file(cls, file_path: Path) -> Self:
