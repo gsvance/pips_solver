@@ -97,26 +97,6 @@ class TestRegions(unittest.TestCase):
             region = Region(spaces[:length])
             self.assertEqual(len(region), length)
 
-    def test_region_contains(self):
-        """Check that the "in" operator works correctly with regions."""
-        spaces = [
-            Space(TOPMOST_ROW + 0, LEFTMOST_COLUMN + 0),
-            Space(TOPMOST_ROW + 1, LEFTMOST_COLUMN + 0),
-            Space(TOPMOST_ROW + 0, LEFTMOST_COLUMN + 1),
-            Space(TOPMOST_ROW + 1, LEFTMOST_COLUMN + 1),
-        ]
-        not_included = [
-            Space(TOPMOST_ROW + 2, LEFTMOST_COLUMN + 1),
-            Space(TOPMOST_ROW + 0, LEFTMOST_COLUMN + 2),
-            Space(TOPMOST_ROW + 2, LEFTMOST_COLUMN + 2),
-            Space(TOPMOST_ROW + 1, LEFTMOST_COLUMN + 3),
-        ]
-        region = Region(spaces)
-        for space in spaces:
-            self.assertIn(space, region)
-        for nope in not_included:
-            self.assertNotIn(nope, region)
-
     def test_region_ordering(self):
         """Check that regions are ordered by spaces tuples as expected."""
         regions = []

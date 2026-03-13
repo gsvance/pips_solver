@@ -31,9 +31,6 @@ class Region:
     def __len__(self) -> int:
         return len(self.spaces)
 
-    def __contains__(self, space: Space) -> bool:
-        return space in self.spaces
-
     def _check_connectedness(self) -> None:
         """Raise an error if the region's spaces are not connected together."""
         # The technique here is to use a breadth-first search (BFS) to explore
