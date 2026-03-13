@@ -50,6 +50,11 @@ class Board:
                 raise ValueError(
                     'condition regions on the board may not overlap'
                 )
+        for region_space in region:
+            if region_space not in self.spaces:
+                raise ValueError(
+                    'region contains a space that is not on the board'
+                )
         self.regions[region] = condition
 
     @classmethod
