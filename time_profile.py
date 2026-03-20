@@ -29,7 +29,7 @@ def measure_puzzle_solving_times(puzzle_path: Path) -> dict[str, float]:
     time_2 = time.perf_counter()
     puzzle_ilp = formulate_ilp(puzzle)
     time_3 = time.perf_counter()
-    solution = puzzle_ilp.solve()
+    solution = puzzle_ilp.solve(msg=False)
     time_4 = time.perf_counter()
     assert solution is not None
 
@@ -90,8 +90,11 @@ def main(puzzles_dir: Path) -> None:
     """Find puzzles in the directory, solve them, and then report runtimes."""
     puzzle_paths = find_puzzle_files(puzzles_dir)
     times: list[dict[str, float]] = []
+    print()
     for puzzle_path in puzzle_paths:
+        print('Now solving', puzzle_path)
         times.append(measure_puzzle_solving_times(puzzle_path))
+    print()
     print_report(times)
 
 

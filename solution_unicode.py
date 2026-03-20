@@ -138,7 +138,7 @@ def main(puzzle_file: Path) -> None:
     print('Formulated PuLP ILP. Solving...')
     print()
 
-    solution = puzzle_ilp.solve()
+    solution = puzzle_ilp.solve(msg=True)
     if solution is None:
         print('ERROR: ILP MODEL FAILED TO SOLVE OPTIMALLY')
         return
@@ -147,6 +147,7 @@ def main(puzzle_file: Path) -> None:
     for domino, spot in solution:
         draw_domino(grid, domino, spot)
 
+    print()
     print('Solution Visualization:')
     print(*(''.join(grid_row).rstrip() for grid_row in grid), sep='\n')
 

@@ -2,6 +2,8 @@
 
 import dataclasses
 import itertools
+from typing import Any, Final
+import warnings
 
 import pulp as pl
 
@@ -115,6 +117,14 @@ def get_binary_value(var: pl.LpVariable) -> int:
     return int_value
 
 
+# Prefer using HiGHS if highspy is installed, since it offers a considerable
+# speedup in solve times when compared to the PuLP default of using the CLI
+# version of CBC. We can let PuLP fall back on CBC if HiGHS is not available,
+# but we should try to use HiGHS since it's also free and seems to handle the
+# Pips problem better than CBC.
+PREFERRED_SOLVER: Final[str] = 'HiGHS'
+
+
 @dataclasses.dataclass(eq=False, match_args=False, slots=True)
 class PipsILP:
     """A PuLP problem together with dicts of variables and expressions."""
@@ -123,9 +133,27 @@ class PipsILP:
     dot_pattern_exprs: dict[tuple[Space, int], pl.LpAffineExpression]
     dot_number_exprs: dict[Space, pl.LpAffineExpression]
 
-    def solve(self) -> Solution | None:
+    def solve(self, **kwargs: Any) -> Solution | None:
         """Solve the ILP problem with PuLP and return a solution object."""
-        self.problem.solve()
+        solver = pl.getSolver(PREFERRED_SOLVER, **kwargs)
+
+        # Use a try-except block to determine whether the preferred solver is
+        # actually available. We *could* explictly fetch the list of available
+        # solvers using pl.listSolvers(onlyAvailable=True) and then just check
+        # whether the preferred solver's name is on the list, but having PuLP
+        # generate the list of available solvers takes like 500 ms, so instead
+        # we assume the preferred solver is available and catch the exception
+        # if PuLP fails to execute it.
+        try:
+            self.problem.solve(solver)
+        except pl.PulpSolverError as solver_exception:
+            if 'cannot execute' not in solver_exception.args[0]:
+                raise  # Solver availability was not the problem
+            warnings.warn(
+                f'preferred solver {PREFERRED_SOLVER!r} is unavailable,'
+                + ' using PuLP default solver instead'
+            )
+            self.problem.solve(**kwargs)
 
         if pl.LpStatus[self.problem.status] != 'Optimal':
             return None
