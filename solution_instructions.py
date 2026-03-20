@@ -23,11 +23,12 @@ def main(puzzle_file: Path) -> None:
     print('Formulated PuLP ILP. Solving...')
     print()
 
-    solution = puzzle_ilp.solve()
+    solution = puzzle_ilp.solve(msg=True)
     if solution is None:
         print('ERROR: ILP MODEL FAILED TO SOLVE OPTIMALLY')
         return
 
+    print()
     print('Solution Instructions:')
     for domino, spot in solution:
         (dot_1, dot_2), (space_1, space_2) = domino, spot
