@@ -1,23 +1,53 @@
-"""A Pips puzzle consists of the game board and the list of dominoes."""
+"""A Pips puzzle consists of dominoes, spaces, and regions with conditions."""
 
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator, Mapping
 from typing import Self
 
-from board import Board
-from conditions import Condition
+from conditions import Condition, parse_condition
 from dominoes import Domino, parse_dominoes
 from regions import Region
-from spaces import Space
+from spaces import parse_board_layout, Space
+
+
+def parse_region_conditions(
+    region_conditions_string: str,
+) -> dict[str, Condition]:
+    """Process an ASCII string of Pips region conditions and return a dict."""
+    conditions: dict[str, Condition] = {}
+    for line in region_conditions_string.strip().splitlines():
+        char, condition_string = line.strip().split()
+        if len(char) != 1:
+            raise ValueError(
+                f'region must be identified by one character, not {char!r}'
+            )
+        if char in conditions:
+            raise ValueError(f'multiple conditions for region {char!r}')
+        conditions[char] = parse_condition(condition_string)
+    return conditions
 
 
 class Puzzle:
-    """A full Pips puzzle made up of a game board and a list of dominoes."""
+    """A Pips puzzle including the game board parts and list of dominoes."""
 
-    __slots__ = ('board', 'dominoes')
+    __slots__ = ('spaces', 'regions', 'dominoes')
 
-    def __init__(self, board: Board, dominoes: list[Domino]) -> None:
-        self.board: Board = board
-        self.dominoes: list[Domino] = dominoes
+    def __init__(
+        self,
+        spaces: Iterable[Space],
+        regions: Mapping[Region, Condition],
+        dominoes: Iterable[Domino],
+    ) -> None:
+        """Create a new Pips puzzle object using the given components."""
+        self.spaces: set[Space] = set()
+        self.regions: dict[Region, Condition] = {}
+        self.dominoes: list[Domino] = []
+
+        for space in spaces:
+            self.add_space(space)
+        for region, condition in regions.items():
+            self.add_region_with_condition(region, condition)
+        for domino in dominoes:
+            self.dominoes.append(domino)
 
         unique_dominoes = frozenset(self.dominoes)
         if len(unique_dominoes) < len(self.dominoes):
@@ -27,42 +57,87 @@ class Puzzle:
         spaces_needed_for_dominoes = 0
         for domino in self.dominoes:
             spaces_needed_for_dominoes += len(domino)
-        if spaces_needed_for_dominoes != self.board.num_spaces:
+        if spaces_needed_for_dominoes != self.num_spaces:
             raise ValueError(
-                f'board has {self.board.num_spaces} spaces for dominoes, '
+                f'puzzle has {self.num_spaces} spaces for dominoes, '
                 + f'but needs {spaces_needed_for_dominoes}'
             )
         del spaces_needed_for_dominoes
 
+    def add_space(self, space: Space) -> None:
+        """Add one new space to the Pips puzzle."""
+        if space in self.spaces:
+            raise ValueError('that space is already in the puzzle')
+        self.spaces.add(space)
+
+    def add_region_with_condition(
+        self, region: Region, condition: Condition,
+    ) -> None:
+        """Add one region to the Pips puzzle with an attached condition."""
+        for existing_region in self.regions:
+            if region.overlaps_with(existing_region):
+                raise ValueError(
+                    'condition regions in the puzzle may not overlap'
+                )
+        for region_space in region:
+            if region_space not in self.spaces:
+                raise ValueError(
+                    'region contains a space that is not in the puzzle'
+                )
+        self.regions[region] = condition
+
     @classmethod
     def parse(cls, puzzle_string: str) -> Self:
-        """Parse the contents of a Pips puzzle file as a board and dominoes."""
-        board_string, dominoes_string = (
-            puzzle_string.rstrip().rsplit('\n\n', maxsplit=1)
+        """Parse the contents of a Pips puzzle file as a puzzle object."""
+        board_layout_string, region_conditions_string, dominoes_string = (
+            puzzle_string.rstrip().rsplit('\n\n', maxsplit=2)
         )
-        board = Board.parse(board_string)
+
+        spaces = parse_board_layout(board_layout_string)
+        conditions = parse_region_conditions(region_conditions_string)
+
+        space_chars = frozenset(spaces.values())
+        for char in conditions:
+            if char not in space_chars:
+                raise ValueError(
+                    f'region {char!r} has a condition but no puzzle spaces'
+                )
+        del space_chars
+
+        regions: dict[Region, Condition] = {}
+        for condition_char, condition in conditions.items():
+            region = Region(
+                space for space, space_char in spaces.items()
+                if space_char == condition_char
+            )
+            regions[region] = condition
+
         dominoes = parse_dominoes(dominoes_string)
-        return cls(board, dominoes)
+        return cls(spaces.keys(), regions, dominoes)
 
     @property
     def num_spaces(self) -> int:
-        """The total number of spaces on the board."""
-        return self.board.num_spaces
+        """The total number of spaces in the puzzle."""
+        return len(self.spaces)
 
     @property
     def num_rows(self) -> int:
-        """The total number of rows (including empty ones) on the board."""
-        return self.board.num_rows
+        """The total number of rows (including empty ones) in the puzzle."""
+        min_r = min(space.r for space in self.spaces)
+        max_r = max(space.r for space in self.spaces)
+        return max_r - min_r + 1
 
     @property
     def num_columns(self) -> int:
-        """The total number of columns (including empty ones) on the board."""
-        return self.board.num_columns
+        """The total number of columns (including empty ones) in the puzzle."""
+        min_c = min(space.c for space in self.spaces)
+        max_c = max(space.c for space in self.spaces)
+        return max_c - min_c + 1
 
     @property
     def num_regions(self) -> int:
-        """The total number of regions on the board."""
-        return self.board.num_regions
+        """The total number of regions in the puzzle."""
+        return len(self.regions)
 
     @property
     def num_dominoes(self) -> int:
@@ -70,16 +145,16 @@ class Puzzle:
         return len(self.dominoes)
 
     def iter_sorted_spaces(self) -> Iterator[Space]:
-        """Return an iterator over the board's spaces in sorted order."""
-        return self.board.iter_sorted_spaces()
+        """Return an iterator over the puzzle's spaces in sorted order."""
+        return iter(sorted(self.spaces))
 
     def iter_sorted_regions(self) -> Iterator[Region]:
-        """Return an iterator over the board's regions in sorted order."""
-        return self.board.iter_sorted_regions()
+        """Return an iterator over the puzzle's regions in sorted order."""
+        return iter(sorted(self.regions.keys()))
 
     def get_condition(self, region: Region) -> Condition:
-        """Return the condition associated with one of the board's regions."""
-        return self.board.get_condition(region)
+        """Return the condition associated with one of the puzzle's regions."""
+        return self.regions[region]
 
     def iter_dominoes(self) -> Iterator[Domino]:
         """Return an iterator over the puzzle's domino pieces."""
@@ -88,8 +163,10 @@ class Puzzle:
     def __contains__(
         self, space_or_region_or_domino: Space | Region | Domino,
     ) -> bool:
-        if isinstance(space_or_region_or_domino, (Space, Region)):
-            return space_or_region_or_domino in self.board
+        if isinstance(space_or_region_or_domino, Space):
+            return space_or_region_or_domino in self.spaces
+        if isinstance(space_or_region_or_domino, Region):
+            return space_or_region_or_domino in self.regions
         if isinstance(space_or_region_or_domino, Domino):
             return space_or_region_or_domino in self.dominoes
         return False
@@ -118,7 +195,6 @@ if __name__ == '__main__':
 
     print()
     print('Puzzle:', repr(puzzle))
-    print('Board:', repr(puzzle.board))
     print()
     print('Dominoes:', *(puzzle.iter_dominoes()), sep='  ')
     print()

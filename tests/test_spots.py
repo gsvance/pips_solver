@@ -4,7 +4,6 @@ from dataclasses import FrozenInstanceError
 import random
 import unittest
 
-from board import Board
 from dominoes import (
     Domino,
     MAX_DOTS,
@@ -174,12 +173,11 @@ class TestSpots(unittest.TestCase):
         space_c = Space(TOPMOST_ROW + 2, LEFTMOST_COLUMN + 0)
         space_d = Space(TOPMOST_ROW + 2, LEFTMOST_COLUMN + 1)
 
-        board = Board()
-        for space in [space_a, space_b, space_c, space_d]:
-            board.add_space(space)
+        spaces = [space_a, space_b, space_c, space_d]
+        regions = {}
         dominoes = [Domino(MIN_DOTS, MIN_DOTS), Domino(MAX_DOTS, MAX_DOTS)]
 
-        puzzle = Puzzle(board, dominoes)
+        puzzle = Puzzle(spaces, regions, dominoes)
         spots = get_sorted_spots(puzzle)
 
         expected_spots = [
