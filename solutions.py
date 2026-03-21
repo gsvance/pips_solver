@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Self
 
 from dominoes import Domino
-from spaces import Space
 from spots import Spot
 
 
