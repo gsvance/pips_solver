@@ -16,13 +16,17 @@ A Pips puzzle to be solved is first be stored in a specially formatted ASCII fil
 
 ## Mathematical formulation
 
-A Pips board is made up of spaces, which can be modeled as $B \subset \mathbb{N} \times \mathbb{N}$, i.e., each $b \in B$ looks like $(r, c)$, where $r$ is the row index and $c$ is the column index. The board contains zero or more regions $R_i \subseteq B$ for $i \in \\{ 1, \ldots, k \\}$, each of which is associated with some condition $C_i$ that must be satisfied. The set of dominoes is $D \subseteq \\{ 0, 1, \ldots, 6 \\} \times \\{ 0, 1, \ldots, 6 \\}$, where any $d \in D$ might look like $(u, v)$.
+A Pips board is made up of spaces, which can be modeled as $B \subset \mathbb{N} \times \mathbb{N}$, i.e., each $b \in B$ looks like $(r, c)$, where $r$ is the row index and $c$ is the column index. The board contains zero or more regions $R_i \subseteq B$ for $i \in \\{ 1, \ldots, k \\}$, each of which is associated with some condition $C_i$ that must be satisfied. The set of dominoes is $D \subseteq \\{ 0, 1, \ldots, 6 \\} \times \\{ 0, 1, \ldots, 6 \\}$, where any $d \in D$ might look like $(u, v)$. Note that in order to have a non-trivial puzzle with any hope of a solution, we must have 0 < |B| = 2 |D|.
 
-We can now construct the set $S$ of spots where a domino might be placed. Let the set of spots be
+We can now construct the set $S \subseteq B \times B$ of spots where a domino might be placed. Let the set of spots be
 
-$$ S = \\{ (b_1, b_2) : b_1, b_2 \in B \ \text{and} \ |r_2 - r_1| + |c_2 - c_1| = 1 \\} , $$
+$$ S = \\{ (b_1, b_2) : |r_2 - r_1| + |c_2 - c_1| = 1 \\} , $$
 
-where $b_1 = (r_1, c_1)$, $b_2 = (r_2, c_2)$, and the taxicab distance enforces that these spaces must be horizontally or vertically adjacent.
+where $b_1, b_2 \in B$, $b_1 = (r_1, c_1)$, $b_2 = (r_2, c_2)$, and the absolute value enforces that these spaces are horizontally or vertically adjacent. From here, we can create our binary decision variables $x_{ds}$, where
+
+$$ x_{ds} \in \\{ 0, 1 \\}, d \in D, s \in S $$
+
+and $x_{ds}$ is a flag indicating a decision to place a domino in a spot. If $x_{ds} = 1$, then domino $d$ has been placed in spot $s$, and if $x_{ds} = 0$, then domino $d$ has not been placed in spot $s$.
 
 ## Currently included here
 
