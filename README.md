@@ -16,7 +16,7 @@ A Pips puzzle to be solved is first be stored in a specially formatted ASCII fil
 
 ## Mathematical formulation
 
-`spots` `dominoes` `placement_vars`
+A Pips board is made up of spaces, which can be modeled as $B \subset \mathbb{N} \times \mathbb{N}$, i.e., each $b \in B$ looks like $(r, c)$, where $r$ is the row index and $c$ is the column index. The board contains zero or more regions $R_i \subseteq B$ for $i \in \{1, \ldots, k\}$, each of which is associated with some condition $C_i$ that must be satisfied. The set of dominoes is $D \subseteq \{0, 1, \ldots, 6\} \times {0, 1, \ldots, 6}$, where any $d \in D$ might look like $(u, v)$.
 
 ## Currently included here
 
