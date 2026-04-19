@@ -16,7 +16,13 @@ A Pips puzzle to be solved is first be stored in a specially formatted ASCII fil
 
 ## Mathematical formulation
 
-A Pips board is made up of spaces, which can be modeled as $B \subset \mathbb{N} \times \mathbb{N}$, i.e., each $b \in B$ looks like $(r, c)$, where $r$ is the row index and $c$ is the column index. The board contains zero or more regions $R_i \subseteq B$ for $i \in \{1, \ldots, k\}$, each of which is associated with some condition $C_i$ that must be satisfied. The set of dominoes is $D \subseteq \{0, 1, \ldots, 6\} \times {0, 1, \ldots, 6}$, where any $d \in D$ might look like $(u, v)$.
+A Pips board is made up of spaces, which can be modeled as $B \subset \mathbb{N} \times \mathbb{N}$, i.e., each $b \in B$ looks like $(r, c)$, where $r$ is the row index and $c$ is the column index. The board contains zero or more regions $R_i \subseteq B$ for $i \in \\{ 1, \ldots, k \\}$, each of which is associated with some condition $C_i$ that must be satisfied. The set of dominoes is $D \subseteq \\{ 0, 1, \ldots, 6 \\} \times \\{ 0, 1, \ldots, 6 \\}$, where any $d \in D$ might look like $(u, v)$.
+
+We can now construct the set $S$ of spots where a domino might be placed. Let the set of spots be
+
+$$ S = \\{ (b_1, b_2) : b_1, b_2 \in B \ \text{and} \ |r_2 - r_1| + |c_2 - c_1| = 1 \\} , $$
+
+where $b_1 = (r_1, c_1)$, $b_2 = (r_2, c_2)$, and the taxicab distance enforces that these spaces must be horizontally or vertically adjacent.
 
 ## Currently included here
 
